@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+C:\GitHub\Simula15Loom\.metadata\.plugins\org.eclipse.jdt.core
+760803677.index
+1651908340.index
