@@ -273,10 +273,10 @@ public final class MakeSetup {
 		String installerManifest=SETUP_SRC+"\\InstallerManifest.MF";
 		String files=" -C "+RELEASE_HOME+" ."  // Complete Simula Release
 				    +" -C "+INSTALLER_BIN+" ./make/setup";
-		execute("jar cmf "+installerManifest+" "+GIT_BINARIES+"\\setup.jar"+files);
-		printHeading("BEGIN -- List Simula Setup.jar in "+GIT_BINARIES);
-		execute("jar -tvf "+GIT_BINARIES+"\\setup.jar");
-		printHeading("END -- List Simula Setup.jar in "+GIT_BINARIES);
+		execute("jar cmf "+installerManifest+" "+GIT_BINARIES+"\\setup2.jar"+files);
+		printHeading("BEGIN -- List Simula Setup2.jar in "+GIT_BINARIES);
+		execute("jar -tvf "+GIT_BINARIES+"\\setup2.jar");
+		printHeading("END -- List Simula Setup2.jar in "+GIT_BINARIES);
 		copySetupJAR();
 	}
 	
@@ -284,8 +284,8 @@ public final class MakeSetup {
 	// *** COPY SIMULA INSTALLER JAR
 	// ***************************************************************
 	private static void copySetupJAR() throws IOException	{
-		File source=new File(GIT_BINARIES+"\\setup.jar");
-		File target=new File(GITHUB_ROOT+"\\github.io\\setup2\\setup.jar");
+		File source=new File(GIT_BINARIES+"\\setup2.jar");
+		File target=new File(GITHUB_ROOT+"\\github.io\\setup\\setup2.jar");
 		System.out.println("source="+source);
 		System.out.println("target="+target);
 		Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
@@ -296,7 +296,7 @@ public final class MakeSetup {
 	// *** EXECUTE SIMULA SETUP
 	// ***************************************************************
 	private static void executeSimulaSetup() throws IOException	{
-		String SETUP_JAR=GITHUB_ROOT+"\\github.io\\setup2\\setup.jar";
+		String SETUP_JAR=GITHUB_ROOT+"\\github.io\\setup\\setup2.jar";
 		printHeading("Execute SimulaSetup: "+SETUP_JAR);
 		execute("java -jar "+SETUP_JAR);
 	}

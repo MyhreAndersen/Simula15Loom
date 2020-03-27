@@ -6,14 +6,20 @@
 		<item key="wholeword" value="true"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="icons"/>
+		<item key="selection" value="setup.jar"/>
 		<list key="findhistory">
+			<item value="setup2.jar"/>
+			<item value="github.io"/>
+			<item value="setup.jar"/>
+			<item value="setup"/>
+			<item value="setupProperties.xml"/>
+			<item value="doCheckForNewVersion"/>
 			<item value="icons"/>
 			<item value="setup2"/>
-			<item value="setup"/>
 			<item value="INSTALL_DIR"/>
 		</list>
 		<list key="replacehistory">
+			<item value="setup.jar"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
