@@ -41,10 +41,10 @@ public final class Global {
 	public static final boolean USE_JAVA_SYSTEM_COMPILER=true;//false;//true;
 	public static final boolean USE_EXACT_MATH=true;//false;//true;
 	
-//	public static final boolean MODIFY_CLASS_VERSION=false;
-//	public static final int major=52;  // .class file format version's Major
-//	public static final int minor=0;   // .class file format version's Minor
-//	public static final int classFileVersion=minor<<16 | major;   // .class file format version used by modified .class files
+	public static final boolean MODIFY_CLASS_VERSION=false;
+	public static final int major=52;  // .class file format version's Major
+	public static final int minor=0;   // .class file format version's Minor
+	public static final int classFileVersion=minor<<16 | major;   // .class file format version used by modified .class files
 
 	public static File simulaHome;
 	public static String simulaVersion;
