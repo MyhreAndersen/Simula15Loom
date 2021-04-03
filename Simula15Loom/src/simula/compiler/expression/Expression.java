@@ -305,14 +305,14 @@ public abstract class Expression extends SyntaxClass {
 
 	private static ClassDeclaration getQualification(final Expression simpleObjectExpression) {
 		String refIdent=simpleObjectExpression.type.getRefIdent();
-		Declaration objDecl = Global.currentScope.findMeaning(refIdent).declaredAs;
+		Declaration objDecl = Global.getCurrentScope().findMeaning(refIdent).declaredAs;
 		if(objDecl instanceof ClassDeclaration)	return((ClassDeclaration)objDecl);
 		Util.error("Illegal ref(" + refIdent + "): " + refIdent + " is not a class");
 		return(null);
 	}
 
 	public static ClassDeclaration getQualification(final String classIdentifier) {
-		Declaration classDecl=Global.currentScope.findMeaning(classIdentifier).declaredAs;
+		Declaration classDecl=Global.getCurrentScope().findMeaning(classIdentifier).declaredAs;
 		if(classDecl instanceof ClassDeclaration) return((ClassDeclaration)classDecl);
 		Util.error("Illegal: " + classIdentifier + " is not a class");
 		return(null);
@@ -357,7 +357,7 @@ public abstract class Expression extends SyntaxClass {
 		    }
 	    } else if(this instanceof Variable) {
 		    Variable var=(Variable)this;
-		    Meaning meaning=Global.currentScope.findMeaning(var.identifier);
+		    Meaning meaning=Global.getCurrentScope().findMeaning(var.identifier);
 		    if(meaning==null) {
 		    	return(null);
 		    }

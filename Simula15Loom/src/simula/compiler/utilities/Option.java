@@ -45,6 +45,7 @@ public final class Option {
 	// Checker Trace Options
 	public static boolean TRACE_CHECKER=false;//true;
 	public static boolean TRACE_CHECKER_OUTPUT=false;//true;
+	public static int TRACE_FIND=0;
 
 	// Coder Trace Options
 	public static boolean TRACE_CODING=false;//true;

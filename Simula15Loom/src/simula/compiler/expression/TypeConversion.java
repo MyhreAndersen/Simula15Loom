@@ -76,7 +76,7 @@ public final class TypeConversion extends Expression {
 
 	public void doChecking() {
 		if (IS_SEMANTICS_CHECKED())	return;
-		type.doChecking(Global.currentScope);
+		type.doChecking(Global.getCurrentScope());
 		expression.doChecking();
 		Type type = expression.type;
 		if (type.isConvertableTo(this.type) == Type.ConversionKind.Illegal)

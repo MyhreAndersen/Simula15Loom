@@ -54,7 +54,7 @@ public final class ConnectionStatement extends Statement {
 		String ident = "inspect$" + lineNumber + '$' + (SEQU++);
 		inspectedVariable = new Variable(ident);
 		inspectVariableDeclaration = new SimpleVariableDeclaration(Type.Ref("RTObject"), ident);
-		DeclarationScope scope = Global.currentScope;
+		DeclarationScope scope = Global.getCurrentScope();
 		while (scope.declarationKind == null || scope instanceof ConnectionBlock)
 			scope = scope.declaredIn;
 		scope.declarationList.add(inspectVariableDeclaration);
@@ -175,10 +175,10 @@ public final class ConnectionStatement extends Statement {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN ConnectionStatement(" + toString() + ").doChecking - Current Scope Chain: " + Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN ConnectionStatement(" + toString() + ").doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		objectExpression.doChecking();
 		Type exprType = objectExpression.type;
-		exprType.doChecking(Global.currentScope);
+		exprType.doChecking(Global.getCurrentScope());
 		inspectVariableDeclaration.type = exprType;
 		inspectedVariable.type = exprType;
 		inspectedVariable.doChecking();

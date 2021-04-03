@@ -76,7 +76,7 @@ public class SimpleVariableDeclaration extends Declaration implements Externaliz
 		return(constant || constantElement!=null);	
 	}
 	   
-	public static void parse(final Type type,final Vector<Declaration> declarationList) {
+	public static void parse(final Type type,final DeclarationList declarationList) {
 		// identifier-list = identifier { , identifier }
 	    if(Option.TRACE_PARSE) Parser.TRACE("Parse IdentifierList");
 	    if(Parser.accept(KeyWord.PROCEDURE)) declarationList.add(ProcedureDeclaration.doParseProcedureDeclaration(type));
@@ -94,14 +94,15 @@ public class SimpleVariableDeclaration extends Declaration implements Externaliz
 	public void doChecking() {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber=lineNumber;
-		type.doChecking(Global.currentScope);
+		type.doChecking(Global.getCurrentScope());
 		if(constantElement!=null) {
 			constantElement.doChecking();
 	        constantElement=TypeConversion.testAndCreate(type,constantElement);
 	        constantElement.type=type;
+	        constantElement.backLink=this;
 		}
-		if(Global.currentScope instanceof ClassDeclaration) {
-			ClassDeclaration cls=(ClassDeclaration)Global.currentScope;
+		if(Global.getCurrentScope() instanceof ClassDeclaration) {
+			ClassDeclaration cls=(ClassDeclaration)Global.getCurrentScope();
 			if(cls.prefixLevel()>0) externalIdent=identifier+'$'+cls.prefixLevel();
 			else externalIdent=identifier;
 		}
@@ -119,7 +120,7 @@ public class SimpleVariableDeclaration extends Declaration implements Externaliz
 	public String toJavaCode() {
 		ASSERT_SEMANTICS_CHECKED(this);
 		String modifier = "";
-		if (Global.currentScope.declarationKind==Declaration.Kind.Class) modifier = "public ";
+		if (Global.getCurrentScope().declarationKind==Declaration.Kind.Class) modifier = "public ";
 		if (this.isConstant()) modifier = modifier+"final ";
 		if(constantElement!=null) {
 			constantElement=TypeConversion.testAndCreate(type,constantElement.evaluate());

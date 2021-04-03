@@ -31,6 +31,7 @@ import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import simula.common.ConsolePanel;
+import simula.runtime.RTObject$.OperationalState;
 
 /**
  * 
@@ -708,6 +709,13 @@ public abstract class RTObject$ {
 				RT.printSimulaStackTrace(e, 0);
 				e.printStackTrace();
 				endProgram(-1);
+			} else if (e instanceof Error) {
+				String msg = e.getClass().getSimpleName();
+//				if(ENVIRONMENT$.EXCEPTION_HANDLER!=null) treatRuntimeException(msg);
+				RT.printError(who + ": SIMULA RUNTIME ERROR: " + msg);
+				RT.printSimulaStackTrace(e, 0);
+//				e.printStackTrace();
+				endProgram(-1);
 			} else {
 				RT.printError(who + ": UNCAUGHT EXCEPTION: " + e.getMessage());
 				e.printStackTrace();
@@ -865,6 +873,40 @@ public abstract class RTObject$ {
 	// *********************************************************************
 	// *** DETACH - MOVED TO CLASS$ -- See Simula Standard 7.3.1 Detach
 	// *********************************************************************
+	public static void detach(RTObject$ SL) {
+		SL.detach();
+	}
+	public void detach() {
+		if (isQPSystemBlock()) return; // Detach QPS System Block is no-operation.
+		// Make sure that this object is on the operating chain.
+		// Note that a detached or terminated object cannot be on the operating chain.
+		RTObject$ dl = CUR$;
+		while (dl != this) {
+			dl = dl.DL$;
+			if (dl == null)
+				throw new RuntimeException("x.Detach: x is not on the operating chain.");
+		}
+		switch(this.STATE$) {
+			case resumed: {
+				// Find main component for component to be detached. The main
+				// component head must be the static enclosure of the object.
+				RTObject$ main = this.SL$;
+				// Rotate the contents of 'CUR$', 'this.DL$' and 'main.DL$'.
+				// <main.DL$,this.DL$,CUR$> := <this.DL$,CUR$,main.DL$>
+				dl = main.DL$; main.DL$ = this.DL$; this.DL$ = CUR$; CUR$ = dl;
+			} break;
+			case attached: {
+				// Swap the contents of object's 'this.DL$' and 'CUR$'.
+				// <this.DL$,CUR$> := <CUR$,this.DL$>
+				dl = this.DL$; this.DL$ = CUR$; CUR$ = dl;
+			} break;
+			default: throw new RuntimeException("Illegal Detach");
+		}
+		this.STATE$ = OperationalState.detached;
+ 
+		if (RT.Option.QPS_TRACING) RT.TRACE("DETACH " + this.edObjectIdent() + " ==> " + CUR$.edObjectIdent());
+		Continuation.yield(continuationScope);
+	}
 
 	// *********************************************************************
 	// *** CALL - See Simula Standard 7.3.1 Call

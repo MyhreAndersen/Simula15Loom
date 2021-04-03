@@ -56,8 +56,7 @@ public final class RemoteVariable extends Expression {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN RemoteVariable" + toString() + ".doChecking - Current Scope Chain: "
-					+ Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN RemoteVariable" + toString() + ".doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		this.type = doRemoteChecking(obj, var);
 
 		if (Option.TRACE_CHECKER)
@@ -66,6 +65,7 @@ public final class RemoteVariable extends Expression {
 	}
 
 	private Type doRemoteChecking(final Expression obj, final Expression attr) {
+		//Util.BREAK("RemoteVariable.doRemoteChecking: obj="+obj+", attr="+attr);
 		Global.sourceLineNumber = lineNumber;
 		Type result;
 		obj.doChecking();
@@ -73,12 +73,12 @@ public final class RemoteVariable extends Expression {
 		if (objType == Type.Text)
 			return (doRemoteTextChecking(obj, attr));
 
-		objType.doChecking(Global.currentScope); // Nødvendig hvis TypeDeclaration er nedenfor TODO: ER DETTE OK ?
+		objType.doChecking(Global.getCurrentScope()); // Nødvendig hvis TypeDeclaration er nedenfor TODO: ER DETTE OK ?
 		ClassDeclaration qual = objType.getQual();
 		if (qual == null)
 			Util.error("doRemoteChecking: Object Expression (" + obj + ") is not a ref() type rather " + objType);
 		else if (qual.hasLocalClasses)
-			Util.error("Illegal remote access into object of class with local classes.");
+			Util.warning("Illegal remote access into object of class with local classes.");
 
 		if (attr instanceof Variable) {
 			Variable var = (Variable) attr;

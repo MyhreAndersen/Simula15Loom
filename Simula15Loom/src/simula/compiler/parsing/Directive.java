@@ -34,6 +34,7 @@ public class Directive {
 	 * the inclusion and turned on again when reading continues after this directive. 
 	 */
 	public static void insert(final SimulaScanner scanner,final String fileName) {
+		Util.warning("%INSERT "+fileName);
 		File file=new File(fileName);
 		if(file.exists() && file.canRead()) {
 		    try {

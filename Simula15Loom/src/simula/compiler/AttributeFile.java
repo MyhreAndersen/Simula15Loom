@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import simula.compiler.declaration.BlockDeclaration;
 import simula.compiler.declaration.Declaration;
+import simula.compiler.declaration.DeclarationList;
 import simula.compiler.declaration.StandardClass;
 import simula.compiler.utilities.Global;
 import simula.compiler.utilities.Option;
@@ -80,7 +81,7 @@ public final class AttributeFile {
 	}
 
 	public static Type readAttributeFile(final InputStream inputStream,final File file,
-            final Vector<Declaration> declarationList) throws IOException, ClassNotFoundException {
+            final DeclarationList declarationList) throws IOException, ClassNotFoundException {
 		AttributeFile attributeFile = new AttributeFile(file);
 		if (Option.verbose)	Util.TRACE("*** BEGIN Read SimulaAttributeFile: " + file);
 		attributeFile.inpt = new ObjectInputStream(inputStream);
@@ -92,11 +93,27 @@ public final class AttributeFile {
 			try { module=(BlockDeclaration) attributeFile.inpt.readObject();}
 			catch (EOFException e1) { break LOOP; }
 			module.isPreCompiled = true;
-			declarationList.add(module);
-			moduleType=module.type;
-			if (Option.verbose)
-				Util.TRACE("***       Read External " + module.declarationKind + ' ' + module.identifier + '[' + module.externalIdent + ']');
-			if (Option.TRACE_ATTRIBUTE_INPUT) module.print(0);
+//			Util.BREAK("AttributeFile.readAttributeFile: module="+module);
+			Declaration d=declarationList.find(module.identifier);
+			if(d!=null) {
+				Util.warning("Multiple declarations with the same name: "+module+" and "+d);
+			} else {
+				declarationList.add(module);
+				moduleType=module.type;
+				
+//				Util.BREAK("SimulaAttributeFile.readAttributeFile: BEGIN "+declarationList.identifier+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//				for(Declaration dd:declarationList) Util.message(""+dd);
+//				Util.BREAK("SimulaAttributeFile.readAttributeFile: ENDOF "+declarationList.identifier+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+//				Util.BREAK("SimulaAttributeFile.readAttributeFile: BEGIN "+module.declarationList.identifier+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//				for(Declaration dd:module.declarationList) Util.message(""+dd);
+//				Util.BREAK("SimulaAttributeFile.readAttributeFile: ENDOF "+module.declarationList.identifier+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+				if (Option.verbose)
+					Util.TRACE("***       Read External " + module.declarationKind + ' ' + module.identifier + '[' + module.externalIdent + ']'
+							+"  ==>  "+declarationList.identifier);
+				if (Option.TRACE_ATTRIBUTE_INPUT) module.print(0);
+			}
 		}
 		attributeFile.inpt.close();
 		if (Option.verbose)	Util.TRACE("*** ENDOF Read SimulaAttributeFile: " + file);

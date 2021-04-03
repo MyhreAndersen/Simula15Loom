@@ -117,8 +117,7 @@ public final class BooleanOperation extends Expression {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN BooleanOperation" + toString() + ".doChecking - Current Scope Chain: "
-					+ Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN BooleanOperation" + toString() + ".doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		switch (opr) {
 		    case AND:case OR:case IMP:case EQV:case AND_THEN:case OR_ELSE: {
 		    	// Boolean operation

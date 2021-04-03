@@ -62,7 +62,7 @@ public abstract class Statement extends SyntaxClass {
 				if (labels == null)	labels = new Vector<String>();
 				labels.add(ident);
 				LabelDeclaration label = new LabelDeclaration(ident);
-				Global.currentScope.labelList.add(label);
+				Global.getCurrentScope().labelList.add(label);
 			} else Util.error("Missplaced ':'");
 			ident = acceptIdentifier();
 		}

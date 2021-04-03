@@ -88,17 +88,33 @@ package simula.runtime;
  */
 public class Simulation$ extends Simset$ {
     public boolean isDetachUsed() { return(true); }
+    
+    public static final boolean USE_RANKING=true;//false;//true;
 
 	public final SequencingSet$ SQS;
+	public final Ranking sqs;
 	public final MAIN_PROGRAM$ main;
 	
 	// Constructor
 	public Simulation$(RTObject$ staticLink) {
 		super(staticLink);
-		SQS=new SequencingSet$();
-		main = (MAIN_PROGRAM$) new MAIN_PROGRAM$((Simulation$) CUR$).START$();
+		
+		if(USE_RANKING) {
+			sqs=new Ranking();//("MAIN");
+			sqs.bl = sqs;
+			sqs.ll = sqs;
+			sqs.rl = sqs;
+			SQS=null;
+		} else {
+			SQS=new SequencingSet$();
+			sqs=null;
+		}
+
+        main = (MAIN_PROGRAM$) new MAIN_PROGRAM$((Simulation$) CUR$).START$();
 		main.EVENT = new EVENT_NOTICE$(0, main);
-		SQS.add(main.EVENT,false);
+		if(USE_RANKING) {
+			Ranking.RANK_INTO(main.EVENT, sqs, 0);
+		} else SQS.add(main.EVENT,false);
 	}
 
 	public Simulation$ STM$() {
@@ -109,9 +125,14 @@ public class Simulation$ extends Simset$ {
         EBLK();
 		return(this);
 	}
+	
+	public EVENT_NOTICE$ SQS_FIRST() { return((EVENT_NOTICE$)this.sqs.bl); }
+	public EVENT_NOTICE$ SQS_LAST() { return((EVENT_NOTICE$)this.sqs.ll); }
+
 
 	public double time() {
-		return (SQS.first().EVTIME);			
+		if(USE_RANKING) return (SQS_FIRST().EVTIME());			
+		else return (SQS.first().EVTIME());			
 	}
 
 	/*
@@ -120,23 +141,48 @@ public class Simulation$ extends Simset$ {
 	 * </pre>
 	 */
 	public Process$ current() {
-		return (SQS.first().PROC);			
+		if(USE_RANKING) return (SQS_FIRST().PROC);			
+		else return (SQS.first().PROC);			
 	}
 
 	public void hold(final double T) {
 		SIM_TRACE("Hold " + T);
-		EVENT_NOTICE$ first = SQS.pollFirst();
+		if(USE_RANKING) {
+			HOLD(T);
+			return;
+		}
+		EVENT_NOTICE$ first= SQS.pollFirst();
 		if (first != null) {
-			if (T > 0) first.EVTIME = first.EVTIME + T;
+			//if (T > 0) first.EVTIME() = first.EVTIME() + T;
+			if (T > 0) first.SET_EVTIME(first.EVTIME() + T);
 			EVENT_NOTICE$ suc = SQS.first();
 			SQS.add(first,false);
 			if (suc != null) {
-				if (suc.EVTIME <= first.EVTIME) {
+				if (suc.EVTIME() <= first.EVTIME()) {
 					resume(current());
 				}
 			} 
 		}
 	}
+	
+	public void HOLD(double time) { // import ref(simltn) simblk; long real time; exit label psc;
+	// begin ref(rankin) suc;
+		Process$ x=current();
+		if(time>0) {
+			time=x.evtime()+time;
+			x.EVENT.SET_EVTIME(time);
+		} else time=x.evtime();
+		
+	    Ranking suc=Ranking.RANK_SUC(x.EVENT);
+	    if(suc !=null) {
+	    	if(suc.rnk <= time) {
+	    		Ranking.RANK_INTO(x.EVENT,sqs,time);
+	            // simblk.cur:=suc;
+	    		resume(current());
+	    	}
+	    }
+	}
+
 
 	/*
 	 * <pre>
@@ -159,12 +205,18 @@ public class Simulation$ extends Simset$ {
 		SIM_TRACE("Passivate " + cur.edObjectIdent());
 		// RT.println("Passivate: "+cur.edObjectIdent()+", SQS="+this.SQS);
 		if (cur != null) {
-			SQS.remove(cur.EVENT);
+			if(USE_RANKING) Ranking.RANK_OUT(cur.EVENT);
+			else SQS.remove(cur.EVENT);
 			cur.EVENT = null;
 		}
+		if(USE_RANKING) {
+			if(Ranking.RANK_EMPTY(sqs))
+				throw new RuntimeException("Cancel,Passivate or Wait empties SQS");
+			
+		} else {
 		if (SQS.isEmpty())
 			throw new RuntimeException("Cancel,Passivate or Wait empties SQS");
-
+		}
 		Process$ nxtcur = current();
 		// RT.println("END Passivate: next current="+nxtcur.edObjectIdent()+", SQS="+this.SQS);
 		return(nxtcur);
@@ -180,7 +232,8 @@ public class Simulation$ extends Simset$ {
 		SIM_TRACE("Cancel " + x);
 		if (x == current())	passivate();
 		else if (x != null && x.EVENT != null) {
-			SQS.remove(x.EVENT);
+			if(USE_RANKING) Ranking.RANK_OUT(x.EVENT);
+			else SQS.remove(x.EVENT);
 			x.EVENT = null;
 		}
 	}
@@ -226,16 +279,29 @@ public class Simulation$ extends Simset$ {
 			z = current();
 			X.EVENT = new EVENT_NOTICE$(time(), X);
 			//X.EVENT.precede(FIRSTEV());
-			SQS.add(X.EVENT,true);
-			if (EV != null) {
-				//EV.out();
+			if(USE_RANKING)	Ranking.RANK_INTO(X.EVENT,sqs,X.EVENT.rnk);
+			else SQS.add(X.EVENT,true);
+			
+			removePrevEvent(EV);
+
+			if (z != current())
+				resume(current());
+		}
+	}
+	
+	private void removePrevEvent(EVENT_NOTICE$ EV) {
+		if (EV != null) {
+			//EV.out();
+			if(USE_RANKING) {
+				Ranking.RANK_OUT(EV);
+				if(Ranking.RANK_EMPTY(sqs))
+					throw new RuntimeException("(Re)Activate empties SQS.");
+				
+			} else {
 				SQS.remove(EV);
 				if (SQS.isEmpty())
 					throw new RuntimeException("(Re)Activate empties SQS.");
 			}
-
-			if (z != current())
-				resume(current());
 		}
 	}
 
@@ -259,12 +325,14 @@ public class Simulation$ extends Simset$ {
 			z = current();
 			if (T < time())	T = time();
 			X.EVENT = new EVENT_NOTICE$(T, X);
-			SQS.add(X.EVENT,PRIO);
-			if (EV != null) {
-				SQS.remove(EV);
-				if (SQS.isEmpty())
-					throw new RuntimeException("(Re)Activate empties SQS.");
-			}
+			
+			if(USE_RANKING) {
+	            if(PRIO) Ranking.RANK_PRIOR(X.EVENT,sqs, T);
+	            else Ranking.RANK_INTO(X.EVENT,sqs,T);
+				
+			} else SQS.add(X.EVENT,PRIO);
+			
+			removePrevEvent(EV);
 			if (z != current())	resume(current());
 		}
 	}
@@ -296,15 +364,15 @@ public class Simulation$ extends Simset$ {
 			if (Y == null || Y.EVENT == null) X.EVENT = null;
 			else {
 				if (X == Y)	return; // reactivate X before/after X;
-				double EVTIME=Y.EVENT.EVTIME;
+				double EVTIME=Y.EVENT.EVTIME();
 				X.EVENT = new EVENT_NOTICE$(EVTIME, X);
-				SQS.add(X.EVENT,BEFORE);
+				if(USE_RANKING) {
+					if(BEFORE) Ranking.RANK_FOLLOW(X.EVENT,Y.EVENT); else Ranking.RANK_PRECEDE(X.EVENT,Y.EVENT);
+				} else SQS.add(X.EVENT,BEFORE);
 			}
-			if (EV != null) {
-				SQS.remove(EV);
-				if (SQS.isEmpty())
-					throw new RuntimeException("(Re)Activate empties SQS.");
-			}
+			
+			removePrevEvent(EV);
+
 			if (z != current())
 			{ Process$ nxtcur=current();
 			    SIM_TRACE("END ACTIVATE3 Resume["+nxtcur.edObjectIdent()+']');
@@ -326,12 +394,16 @@ public class Simulation$ extends Simset$ {
 	public void SIM_TRACE(final String msg) {
 		if (RT.Option.SML_TRACING) {
 			Thread thread = Thread.currentThread();
-			RT.println(thread.toString() + ": Time=" + time() + "  " + msg +", SQS="+ SQS);
+			if(USE_RANKING) 
+			     RT.println(thread.toString() + ": Time=" + time() + "  " + msg +", SQS="+ sqs);
+			else RT.println(thread.toString() + ": Time=" + time() + "  " + msg +", SQS="+ SQS);
 		}
 	}
 
 	public String toString() {
-		return ("Simulation$ SQS=" + SQS);
+		if(USE_RANKING) 
+			 return ("Simulation$ SQS=" + sqs);
+		else return ("Simulation$ SQS=" + SQS);
 	}
 
 }

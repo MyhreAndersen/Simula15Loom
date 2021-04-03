@@ -88,7 +88,7 @@ public final class Parameter extends Declaration implements Externalizable {
 			Util.error("Parameter "+identifier+" is not specified -- assumed Simple Integer");
 			kind=Kind.Simple; type=Type.Integer;
 		}
-		if(type!=null) type.doChecking(Global.currentScope.declaredIn);
+		if(type!=null) type.doChecking(Global.getCurrentScope().declaredIn);
 		if(!legalTransmitionMode())
 			Util.error("Illegal transmission mode: "+mode+' '+kind+' '
 					+identifier+" by "+((mode!=null)?mode:"default")+" is not allowed");

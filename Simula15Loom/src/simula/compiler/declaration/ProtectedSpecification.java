@@ -87,7 +87,7 @@ public final class ProtectedSpecification implements Externalizable {
 	@Override
 	public void readExternal(ObjectInput inpt) throws IOException, ClassNotFoundException {
 		identifier=(String)inpt.readObject();
-		this.definedIn=(ClassDeclaration)Global.currentScope;
+		this.definedIn=(ClassDeclaration)Global.getCurrentScope();
 		Util.TRACE_INPUT("ProtectedSpecification: "+identifier);
 	}
 

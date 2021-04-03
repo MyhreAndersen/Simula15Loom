@@ -97,7 +97,7 @@ public final class TEXTOBJ extends RTObject$ {
 	}
 
 	public String toString() {
-		return ("TEXTOBJ: SIZE=" + SIZE + ", CONST=" + CONST + ", MAIN=" + edText(0, SIZE));
+		return ("TEXTOBJ: SIZE=" + SIZE + ", CONST=" + CONST + ", MAIN=\"" + edText(0, SIZE)+"\"");
 	}
 
 }

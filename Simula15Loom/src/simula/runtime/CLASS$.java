@@ -94,36 +94,36 @@ public abstract class CLASS$ extends BASICIO$ implements Runnable {
 	 * </ol>
 	 * </ul>
 	 */
-	public void detach() {
-		if (isQPSystemBlock()) return; // Detach QPS System Block is no-operation.
-		// Make sure that this object is on the operating chain.
-		// Note that a detached or terminated object cannot be on the operating chain.
-		RTObject$ dl = CUR$;
-		while (dl != this) {
-			dl = dl.DL$;
-			if (dl == null)
-				throw new RuntimeException("x.Detach: x is not on the operating chain.");
-		}
-		switch(this.STATE$) {
-			case resumed: {
-				// Find main component for component to be detached. The main
-				// component head must be the static enclosure of the object.
-				RTObject$ main = this.SL$;
-				// Rotate the contents of 'CUR$', 'this.DL$' and 'main.DL$'.
-				// <main.DL$,this.DL$,CUR$> := <this.DL$,CUR$,main.DL$>
-				dl = main.DL$; main.DL$ = this.DL$; this.DL$ = CUR$; CUR$ = dl;
-			} break;
-			case attached: {
-				// Swap the contents of object's 'this.DL$' and 'CUR$'.
-				// <this.DL$,CUR$> := <CUR$,this.DL$>
-				dl = this.DL$; this.DL$ = CUR$; CUR$ = dl;
-			} break;
-			default: throw new RuntimeException("Illegal Detach");
-		}
-		this.STATE$ = OperationalState.detached;
- 
-		if (RT.Option.QPS_TRACING) RT.TRACE("DETACH " + this.edObjectIdent() + " ==> " + CUR$.edObjectIdent());
-		Continuation.yield(continuationScope);
-	}
+//	public void detach() {
+//		if (isQPSystemBlock()) return; // Detach QPS System Block is no-operation.
+//		// Make sure that this object is on the operating chain.
+//		// Note that a detached or terminated object cannot be on the operating chain.
+//		RTObject$ dl = CUR$;
+//		while (dl != this) {
+//			dl = dl.DL$;
+//			if (dl == null)
+//				throw new RuntimeException("x.Detach: x is not on the operating chain.");
+//		}
+//		switch(this.STATE$) {
+//			case resumed: {
+//				// Find main component for component to be detached. The main
+//				// component head must be the static enclosure of the object.
+//				RTObject$ main = this.SL$;
+//				// Rotate the contents of 'CUR$', 'this.DL$' and 'main.DL$'.
+//				// <main.DL$,this.DL$,CUR$> := <this.DL$,CUR$,main.DL$>
+//				dl = main.DL$; main.DL$ = this.DL$; this.DL$ = CUR$; CUR$ = dl;
+//			} break;
+//			case attached: {
+//				// Swap the contents of object's 'this.DL$' and 'CUR$'.
+//				// <this.DL$,CUR$> := <CUR$,this.DL$>
+//				dl = this.DL$; this.DL$ = CUR$; CUR$ = dl;
+//			} break;
+//			default: throw new RuntimeException("Illegal Detach");
+//		}
+//		this.STATE$ = OperationalState.detached;
+// 
+//		if (RT.Option.QPS_TRACING) RT.TRACE("DETACH " + this.edObjectIdent() + " ==> " + CUR$.edObjectIdent());
+//		Continuation.yield(continuationScope);
+//	}
 
 }

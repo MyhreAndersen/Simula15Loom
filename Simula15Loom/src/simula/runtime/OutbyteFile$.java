@@ -41,11 +41,12 @@ public class OutbyteFile$ extends ByteFile$ {
 	// Constructor
     public OutbyteFile$(final RTObject$ staticLink,final TXT$ FILENAME) {
     	super(staticLink,FILENAME);
+		System.out.println("new OutbyteFile$: FILENAME$="+FILENAME$);
     }
     
     // Class Statements
     public OutbyteFile$ STM$() {
-        if(FILENAME$==null)	throw new RuntimeException("Illegal File Name");
+        if(FILENAME$==null)	throw new RuntimeException("Illegal File Name: null");
         EBLK();
         return(this);
     }
@@ -55,10 +56,14 @@ public class OutbyteFile$ extends ByteFile$ {
 		if (FILENAME$.edText().equalsIgnoreCase("sysout"))
 			outputStream = System.out;
 		else {
+			System.out.println("OutbyteFile$.open: FILENAME$="+FILENAME$);
 			doCreateAction();
 			try {
 				outputStream = new FileOutputStream(FILENAME$.edText());
 			} catch (FileNotFoundException e) {
+				//e.printStackTrace();
+				return (false);
+			} catch (RuntimeException e) {
 				//e.printStackTrace();
 				return (false);
 			}
@@ -89,6 +94,21 @@ public class OutbyteFile$ extends ByteFile$ {
 			outputStream.write(b);
 		} catch (IOException e) {
 			throw new RuntimeException("Outbyte failed", e);
+		}
+	}
+
+	public void out2byte(final int b) {
+		if (!OPEN$)
+			throw new RuntimeException("file closed");
+//		RT.BREAK("OutbyteFile.outByte: b="+b);
+//		RT.BREAK("OutbyteFile.outByte: BYTESIZE$="+BYTESIZE$);
+//		RT.BREAK("OutbyteFile.outByte: 2 ** BYTESIZE$="+Math.pow(2,BYTESIZE$));
+//		if (b < 0 || b >= (Math.pow(2,BYTESIZE$)))
+//			throw new RuntimeException("Illegal byte value");
+		try {
+			outputStream.write(b);
+		} catch (IOException e) {
+			throw new RuntimeException("Out2byte failed", e);
 		}
 	}
 

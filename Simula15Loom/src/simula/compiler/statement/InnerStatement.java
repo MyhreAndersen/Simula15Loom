@@ -37,7 +37,7 @@ public final class InnerStatement extends Statement {
 	
 	public void doJavaCoding() {
 		Global.sourceLineNumber=lineNumber;
-		ClassDeclaration cls=(ClassDeclaration)Global.currentScope;
+		ClassDeclaration cls=(ClassDeclaration)Global.getCurrentScope();
 		if(cls.code2==null) cls.code2=new Vector<CodeLine>();
 		Global.currentJavaModule.saveCode=cls.code2;
 	}

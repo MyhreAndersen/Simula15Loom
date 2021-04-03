@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="javax.tools.ToolProvider"/>
-<fullyQualifiedTypeName name="javax.tools.JavaCompiler"/>
+    <fullyQualifiedTypeName name="javax.tools.ToolProvider"/>
+    <fullyQualifiedTypeName name="javax.tools.JavaCompiler"/>
+    <fullyQualifiedTypeName name="simula.compiler.utilities.Global"/>
+    <fullyQualifiedTypeName name="java.util.Stack"/>
+    <fullyQualifiedTypeName name="simula.compiler.utilities.Util"/>
+    <fullyQualifiedTypeName name="simula.compiler.declaration.DeclarationList"/>
+    <fullyQualifiedTypeName name="java.io.IOException"/>
 </qualifiedTypeNameHistroy>

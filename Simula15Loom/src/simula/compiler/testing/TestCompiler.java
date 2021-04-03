@@ -90,10 +90,11 @@ public final class TestCompiler {
 
 		// *** SIMULA ERROR-TEST PROGRAMMER FRA KAREL
 		// String name="/Karel/Collatz.sim";
+		// String name="/Karel/Factorial.sim";
 		// String name="/Karel/FittingRoom.sim";  // P()
 		// String name="/Karel/HegnaNRK.sim";
 		// String name="/Karel/JensensDevice.sim";
-		// String name="/Karel/PrimeUnder.sim";
+		 String name="/Karel/PrimeUnder.sim";
 		// String name="/Karel/simulaid.sim";
 
 		// *** SIMULA ERROR-TEST PROGRAMMER
@@ -122,7 +123,14 @@ public final class TestCompiler {
 		// String name="/error/issue31.sim"; // Labeled INNER
 		// String name="/error/issue32.sim"; // This Process
 		// String name="/error/issue33.sim"; // Call Procedure Formal 
-		 String name="/error/issue34.sim"; // NOTEXT.put... 
+		// String name="/error/issue34.sim"; // NOTEXT.put... 
+		// String name="/error/issue35.sim"; // Missing cast in for-statement coding ...
+		// String name="/error/issue36.sim"; // Missing cast in for-statement coding ...
+		// String name="/error/issue37a.sim"; // Missing cast in for-statement coding ...
+		// String name="/error/issue37b.sim"; // Missing cast in for-statement coding ...
+		// String name="/error/issue38.sim"; // Standalone  new ...
+		// String name="/error/issue39.sim"; //  ...
+		// String name="/error/issue40.sim"; // Integer overflow during parsing
 		// String name="/error/8Queens.sim";  // Illegal Identifier
 		// String name="/error/Queens.sim";
 		// String name="/error/Queens2.sim";  // Illegal Characters
@@ -189,7 +197,7 @@ public final class TestCompiler {
 			Option.TRACE_COMMENTS=false;//true;
 
 			// Parser Trace Options
-			Option.TRACE_PARSE=true;//false;//true;
+			Option.TRACE_PARSE=false;//true;
 			Option.TRACE_ATTRIBUTE_OUTPUT=false;//true;
 			Option.TRACE_ATTRIBUTE_INPUT=false;//true;
 
@@ -200,7 +208,7 @@ public final class TestCompiler {
 			// Coder Trace Options
 			Option.TRACE_CODING=true;
 
-			File userDir=new File("C:/GitHub/SimulaCompiler/Simula");
+			File userDir=new File("C:/GitHub/Simula15Loom/Simula15Loom");
 			Global.packetName="simulaTestPrograms";
 			Option.keepJava=userDir; // Generated .java Source is then found in Eclipse Package simulaTestPrograms
 			Global.simulaRtsLib=new File(userDir,"bin"); // To use Eclipse Project's simula.runtime

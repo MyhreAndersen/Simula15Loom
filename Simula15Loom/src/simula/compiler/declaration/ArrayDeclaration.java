@@ -112,7 +112,7 @@ public final class ArrayDeclaration extends Declaration implements Externalizabl
 		if (Option.TRACE_PARSE)	Util.TRACE("END NEW ArrayDeclaration: " + toString());
 	}
 
-	public static void parse(final Type type,final Vector<Declaration> declarationList) {
+	public static void parse(final Type type,final DeclarationList declarationList) {
 		if (Option.TRACE_PARSE)
 			Util.TRACE("Parse ArrayDeclaration, type=" + type + ", current="
 					+ Parser.currentToken);
@@ -120,7 +120,7 @@ public final class ArrayDeclaration extends Declaration implements Externalizabl
 		} while (Parser.accept(KeyWord.COMMA));
 	}
 
-	private static void parseArraySegment(final Type type,final Vector<Declaration> declarationList) {
+	private static void parseArraySegment(final Type type,final DeclarationList declarationList) {
 		if (Option.TRACE_PARSE)	Parser.TRACE("Parse ArraySegment");
 		// IdentifierList = Identifier { , Identifier }
 		Vector<String> identList = new Vector<String>();

@@ -101,7 +101,7 @@ public class FILE$ extends CLASS$ {
    public FILE$(final RTObject$ staticLink,final TXT$ FILENAME$) {
 	   super(staticLink);
 	   BBLK(); // Iff no prefix
-	   if(FILENAME$==null) throw new RuntimeException("Illegal File Name");
+	   if(FILENAME$==null) throw new RuntimeException("Illegal File Name: null");
 	   this.FILENAME$ = FILENAME$;
    }
    

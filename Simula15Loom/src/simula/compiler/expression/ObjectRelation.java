@@ -83,8 +83,7 @@ public final class ObjectRelation extends Expression {
 			return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN ObjectRelation" + toString() + ".doChecking - Current Scope Chain: "
-					+ Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN ObjectRelation" + toString() + ".doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		classDeclaration = getQualification(classIdentifier);
 		// Object IS ClassIdentifier | Object IN ClassIdentifier
 		lhs.doChecking();

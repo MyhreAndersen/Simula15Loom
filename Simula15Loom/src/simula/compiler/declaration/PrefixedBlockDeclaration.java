@@ -60,7 +60,8 @@ public final class PrefixedBlockDeclaration extends ClassDeclaration {
 		else modifyIdentifier("" + Global.sourceName + "$PBLK" + lineNumber);
 		this.externalIdent = this.identifier;
 		this.lastLineNumber = Global.sourceLineNumber;
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.setScope(declaredIn);
 	}
 
 	// ***********************************************************************************************
@@ -73,12 +74,15 @@ public final class PrefixedBlockDeclaration extends ClassDeclaration {
 		currentBlockLevel++;
 		blockLevel = currentBlockLevel;
 		if (blockPrefix != null) {
-			Global.currentScope = this.declaredIn;
+//			Global.currentScope = this.declaredIn;
+			Global.enterScope(this.declaredIn);
 			blockPrefix.doChecking();
 			this.prefix = blockPrefix.identifier;
 			this.getPrefixClass().doChecking();
+			Global.exitScope();
 		}
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		Util.ASSERT(parameterList.isEmpty(), "Invariant");
 		Util.ASSERT(virtualSpecList.isEmpty(), "Invariant");
 		Util.ASSERT(hiddenList.isEmpty(), "Invariant");
@@ -87,7 +91,8 @@ public final class PrefixedBlockDeclaration extends ClassDeclaration {
 		for (Declaration dcl : declarationList)	dcl.doChecking();
 		for (Statement stm : statements) stm.doChecking();
 		doCheckLabelList(this.getPrefixClass());
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		currentBlockLevel--;
 		SET_SEMANTICS_CHECKED();
 	}
@@ -99,7 +104,8 @@ public final class PrefixedBlockDeclaration extends ClassDeclaration {
 		Global.sourceLineNumber = lineNumber;
 		ASSERT_SEMANTICS_CHECKED(this);
 		JavaModule javaModule = new JavaModule(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		JavaModule.code("@SuppressWarnings(\"unchecked\")");
 		String line = "public final class " + getJavaIdentifier();
 		if (prefix != null)
@@ -147,7 +153,8 @@ public final class PrefixedBlockDeclaration extends ClassDeclaration {
 		}
 		javaModule.codeProgramInfo();
 		JavaModule.code("}", "End of Class");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		javaModule.closeJavaOutput();
 	}
 

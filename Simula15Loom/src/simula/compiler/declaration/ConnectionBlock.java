@@ -39,7 +39,8 @@ public final class ConnectionBlock extends DeclarationScope {
 	public void end() {
 		if (Option.TRACE_PARSE)	Util.TRACE("END ConnectionBlock: " + this.edScopeChain());
 	    if(!labelList.isEmpty()) MaybeBlockDeclaration.moveLabelsFrom(this); // Label is also declaration
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.setScope(declaredIn);
 	}
 	
 	public void setClassDeclaration(final ClassDeclaration classDeclaration) {
@@ -51,6 +52,7 @@ public final class ConnectionBlock extends DeclarationScope {
 	}
 
 	public Meaning findMeaning(final String identifier) {
+//		Util.message("ConnectionBlock.findMeaning: "+identifier);
 		if (classDeclaration == null && Global.duringParsing)
 			return (null); // Still in Pass1(Parser)
 		Meaning result = classDeclaration.findRemoteAttributeMeaning(identifier);
@@ -70,23 +72,27 @@ public final class ConnectionBlock extends DeclarationScope {
 		Global.sourceLineNumber = lineNumber;
 		// Set External Identifier
 		externalIdent = inspectedVariable.identifier + '$' + lineNumber;
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		blockLevel = currentBlockLevel;
 		if (whenClassIdentifier != null) {
 			Meaning meaning = findMeaning(whenClassIdentifier);
 			whenClassDeclaration = meaning.declaredAs;
 		}
 		statement.doChecking();
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		SET_SEMANTICS_CHECKED();
 	}
 
 	public void doJavaCoding() {
 		Global.sourceLineNumber = lineNumber;
 		ASSERT_SEMANTICS_CHECKED(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		statement.doJavaCoding();
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 	}
 
 	public String toJavaCode() {

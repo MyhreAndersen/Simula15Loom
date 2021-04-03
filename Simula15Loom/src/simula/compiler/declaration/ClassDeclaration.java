@@ -161,7 +161,8 @@ public class ClassDeclaration extends BlockDeclaration implements Externalizable
 		block.type = Type.Ref(block.identifier);
 		if (Option.TRACE_PARSE)	Parser.TRACE("Parse ClassDeclaration");
 		if (Option.TRACE_PARSE)	Util.TRACE("END ClassDeclaration: " + block);
-		Global.currentScope = block.declaredIn;
+//		Global.currentScope = block.declaredIn;
+		Global.setScope(block.declaredIn);
 		return (block);
 	}
 	
@@ -292,13 +293,14 @@ public class ClassDeclaration extends BlockDeclaration implements Externalizable
 		if (externalIdent == null) externalIdent = edJavaClassName();
 		currentBlockLevel++;
 		blockLevel = currentBlockLevel;
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		ClassDeclaration prefixClass = null;
 		if (!hasNoRealPrefix()) {
 			prefixClass = getPrefixClass();
 			if (prefixClass.declarationKind != Declaration.Kind.StandardClass) {
 				if (sourceBlockLevel != prefixClass.sourceBlockLevel)
-					Util.error("Subclass on a deeper block level not allowed.");
+					Util.warning("Subclass on a deeper block level not allowed.");
 			}
 		}
 		int prfx = prefixLevel();
@@ -310,7 +312,8 @@ public class ClassDeclaration extends BlockDeclaration implements Externalizable
 		checkProtectedList();
 		checkHiddenList();
 		doCheckLabelList(prefixClass);
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		currentBlockLevel--;
 		SET_SEMANTICS_CHECKED();
 	}
@@ -378,17 +381,31 @@ public class ClassDeclaration extends BlockDeclaration implements Externalizable
 	// *** Utility: findLocalAttribute
 	// ***********************************************************************************************
 	public Declaration findLocalAttribute(final String ident) {
-		for (Parameter parameter : parameterList)
+		if(Option.TRACE_FIND>0) Util.message("BEGIN Checking Class for "+ident+" ================================== "+identifier+" ==================================");
+		if(Option.TRACE_FIND>0 && identifier.equalsIgnoreCase("Common")) Option.TRACE_FIND=2; // TODO: SKAL FJERNES !!!
+		for (Parameter parameter : parameterList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Parameter "+parameter);
 			if (ident.equalsIgnoreCase(parameter.identifier)) return (parameter);
-		for (Declaration declaration : declarationList)
+		}
+		for (Declaration declaration : declarationList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Local "+declaration);
 			if (ident.equalsIgnoreCase(declaration.identifier))	return (declaration);
-		for (LabelDeclaration label : labelList)
+		}
+		for (LabelDeclaration label : labelList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Label "+label);
 			if (ident.equalsIgnoreCase(label.identifier)) return (label);
-		for (VirtualMatch match : virtualMatchList)
+		}
+		for (VirtualMatch match : virtualMatchList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Match "+match);
 			if (ident.equalsIgnoreCase(match.identifier)) return (match);
-		for (VirtualSpecification virtual : virtualSpecList)
+		}
+		for (VirtualSpecification virtual : virtualSpecList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Virtual "+virtual);
 			if (ident.equalsIgnoreCase(virtual.identifier))	return (virtual);
+		}
 		// if(ident.equalsIgnoreCase("P")) Util.BREAK("ClassDeclaration("+identifier+").findLocalAttribute("+ident+"): NOT FOUND");
+		if(Option.TRACE_FIND>0 && identifier.equalsIgnoreCase("Common")) Option.TRACE_FIND=1; // TODO: SKAL FJERNES !!!
+		if(Option.TRACE_FIND>0) Util.message("ENDOF Checking Class for "+ident+" ================================== "+identifier+" ==================================");
 		return (null);
 	}
 
@@ -450,7 +467,8 @@ SEARCH: while (scope != null) {
 	// *** Utility: withinScope -- Used by findRemoteAttributeMeaning
 	// ***********************************************************************************************
 	private static boolean withinScope(final DeclarationScope otherScope) {
-		DeclarationScope scope = Global.currentScope;
+//		DeclarationScope scope = Global.currentScope;
+		DeclarationScope scope = Global.getCurrentScope();
 		while (scope != null) {
 			if (scope == otherScope) return (true);
 			if (scope instanceof ClassDeclaration) {
@@ -469,6 +487,8 @@ SEARCH: while (scope != null) {
 	// *** Utility: findVisibleAttributeMeaning
 	// ***********************************************************************************************
 	public Meaning findVisibleAttributeMeaning(final String ident) {
+		//Util.BREAK("ClassDeclaration.findVisibleAttributeMeaning: "+identifier+", Lookup ident="+ident);
+		if(Option.TRACE_FIND>0) Util.message("BEGIN Checking Class for "+ident+" ================================== "+identifier+" ==================================");
 		boolean searchBehindHidden = false;
 		ClassDeclaration scope = this;
 		Declaration decl = scope.findLocalAttribute(ident);
@@ -491,6 +511,7 @@ SEARCH: while (scope != null) {
 			}
 			scope = scope.getPrefixClass();
 		}
+		if(Option.TRACE_FIND>0) Util.message("ENDOF Checking Class for "+ident+" ================================== "+identifier+" ==================================");
 		return (null);
 	}
 
@@ -507,11 +528,21 @@ SEARCH: while (scope != null) {
 	// *** Utility: getPrefixClass
 	// ***********************************************************************************************
 	public ClassDeclaration getPrefixClass() {
+//		Util.message("ClassDeclaration.getPrefixClass: "+identifier+'\''+prefix+"   Declared in "+declaredIn);
 		if (prefix == null)	return (null);
 		Meaning meaning = declaredIn.findMeaning(prefix);
 		if (meaning == null) Util.error("Undefined prefix: " + prefix);
 		Declaration decl = meaning.declaredAs;
-		if (decl == this) Util.error("Class prefix chain loops");
+		if (decl == this) {
+//			Util.message("ClassDeclaration.getPrefixClass: "+identifier+", prefix="+prefix+"   Declared in "+declaredIn);
+//			Util.message("ClassDeclaration.getPrefixClass: meaning="+meaning);
+//			Util.message("ClassDeclaration.getPrefixClass: Declared in "+declaredIn);
+////			for(Declaration ddd:declaredIn.declarationList) Util.message(""+ddd);
+//			Option.TRACE_FIND=true;
+//			Meaning mmm = declaredIn.findMeaning(prefix);
+//
+			Util.error("Class prefix chain loops: "+identifier);
+		}
 		if (decl instanceof ClassDeclaration) return ((ClassDeclaration) decl);
 		if (decl instanceof StandardClass) return ((ClassDeclaration) decl);
 		Util.error("Prefix " + prefix + " is not a Class");
@@ -597,7 +628,8 @@ SEARCH: while (scope != null) {
 		if (this.isPreCompiled)	return;
 		Global.sourceLineNumber = lineNumber;
 		JavaModule javaModule = new JavaModule(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		JavaModule.code("@SuppressWarnings(\"unchecked\")");
 		String line = "public class " + getJavaIdentifier();
 		if (prefix != null)
@@ -632,7 +664,8 @@ SEARCH: while (scope != null) {
 		codeClassStatements();
 		javaModule.codeProgramInfo();
 		JavaModule.code("}","End of Class");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		javaModule.closeJavaOutput();
 	}
 
@@ -864,12 +897,13 @@ SEARCH: while (scope != null) {
 		hiddenList=(Vector<HiddenSpecification>) inpt.readObject();
 		protectedList=(Vector<ProtectedSpecification>) inpt.readObject();
 		labelList=(Vector<LabelDeclaration>) inpt.readObject();
-		declarationList=(Vector<Declaration>) inpt.readObject();
+		declarationList=(DeclarationList) inpt.readObject();
 //		virtualMatchList=(Vector<VirtualMatch>) inpt.readObject();
 		code1=(Vector<CodeLine>) inpt.readObject();
 		code2=(Vector<CodeLine>) inpt.readObject();
 		Util.TRACE_INPUT("END Read ClassDeclaration: "+identifier+", Declared in: "+this.declaredIn);
-		Global.currentScope = this.declaredIn;
+//		Global.currentScope = this.declaredIn;
+		Global.setScope(this.declaredIn);
 	}
 
 }

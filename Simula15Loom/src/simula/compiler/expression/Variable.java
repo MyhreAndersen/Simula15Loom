@@ -107,8 +107,7 @@ public final class Variable extends Expression {
 	}
 
 	public Meaning getMeaning() {
-	  if (meaning == null)
-		  meaning = Global.currentScope.findMeaning(identifier);
+	  if (meaning == null) meaning = Global.getCurrentScope().findMeaning(identifier);
 	  Util.ASSERT(meaning.isNO_MEANING() || meaning.declaredIn!=null,"Invariant");
 	  return (meaning);
     }
@@ -321,9 +320,9 @@ public final class Variable extends Expression {
 	    ASSERT_SEMANTICS_CHECKED(this);
 	    Expression inspectedVariable=meaning.getInspectedVariable();
 	    
-	    if(decl.identifier.equalsIgnoreCase("L1")) {
-	    	Util.BREAK("Variable.editVariable: decl="+decl+", QUAL="+decl.getClass().getSimpleName()+", declarationKind="+decl.declarationKind);
-	    }
+//	    if(decl.identifier.equalsIgnoreCase("L1")) {
+//	    	Util.BREAK("Variable.editVariable: decl="+decl+", QUAL="+decl.getClass().getSimpleName()+", declarationKind="+decl.declarationKind);
+//	    }
 
 	    StringBuilder s;
 		switch(decl.declarationKind) {
@@ -410,9 +409,9 @@ public final class Variable extends Expression {
    	    	// otherwise; it is a ordinary procedure-call.
    	    	if(destination) { // return("RESULT$");
    	    		ProcedureDeclaration proc=(ProcedureDeclaration)meaning.declaredAs;
-   	    		ProcedureDeclaration found=Global.currentScope.findProcedure(proc.identifier);
+   	    		ProcedureDeclaration found=Global.getCurrentScope().findProcedure(proc.identifier);
    	    		if(found!=null) {
-    	    		if(found.blockLevel==Global.currentScope.blockLevel) return("RESULT$");
+    	    		if(found.blockLevel==Global.getCurrentScope().blockLevel) return("RESULT$");
     	    		String cast=found.getJavaIdentifier();
     	    		return("(("+cast+")"+found.edCTX()+").RESULT$");
    	    		} else Util.error("Can't assign to procedure "+proc.identifier);
@@ -462,7 +461,7 @@ public final class Variable extends Expression {
 			String cast=meaning.declaredIn.getJavaIdentifier();
 			int n=meaning.declaredIn.blockLevel;
 			if(meaning.foundBehindInvisible) cast=meaning.foundIn.getJavaIdentifier();
-			else if(n==Global.currentScope.blockLevel) return(id);  // currentScope may be a sub-block  TODO: Check Dette !
+			else if(n==Global.getCurrentScope().blockLevel) return(id);  // currentScope may be a sub-block  TODO: Check Dette !
 			id="(("+cast+")"+meaning.declaredIn.edCTX()+")."+id;
 		}
 		return(id);		  

@@ -230,8 +230,14 @@ public final class RT {
 	public static void printSimulaStackTrace(final Throwable e,final int start) {
 		StackTraceElement stackTraceElement[] = e.getStackTrace();
 		int n = stackTraceElement.length;
-		for (int i = start; i < n; i++)
+		for (int i = start; i < n; i++) {
 			printSimulaLineInfo(stackTraceElement[i]);
+			if(i>30) {
+				println("... SimulaStackTrace "+(n-30)+" lines Truncated");
+				return;
+			}
+		}
+		
 	}
 
 	public static void printSimulaLineInfo(final StackTraceElement elt)	{

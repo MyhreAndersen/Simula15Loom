@@ -114,7 +114,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 
 		block.lastLineNumber = Global.sourceLineNumber;
 		if (Option.TRACE_PARSE)	Util.TRACE("END ProcedureDeclaration: " + block);
-		Global.currentScope = block.declaredIn;
+//		Global.currentScope = block.declaredIn;
+		Global.setScope(block.declaredIn);
 		return (block);
 	}
 
@@ -209,7 +210,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 
 		currentBlockLevel++;
 		blockLevel = currentBlockLevel;
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 
 		int prfx = 0;// prefixLevel();
 
@@ -227,7 +229,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 			decl.virtualMatchList.add(myVirtual);
 			if (decl == virtualSpec.declaredIn) virtualSpec.hasDefaultMatch = true;
 		}
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		currentBlockLevel--;
 		SET_SEMANTICS_CHECKED();
 	}
@@ -236,15 +239,24 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 	// *** Utility: findVisibleAttributeMeaning
 	// ***********************************************************************************************
 	public Meaning findVisibleAttributeMeaning(final String ident) {
-		for (Declaration declaration : declarationList)
+		//Util.BREAK("ProcedureDeclaration.findVisibleAttributeMeaning: "+identifier+", Lookup ident="+ident);
+		if(Option.TRACE_FIND>0) Util.message("BEGIN Checking Procedure for "+ident+" ================================== "+identifier+" ==================================");
+		for (Declaration declaration : declarationList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Local "+declaration);
 			if (ident.equalsIgnoreCase(declaration.identifier))
 				return (new Meaning(declaration, this, this, false));
-		for (Parameter parameter : parameterList)
+		}
+		for (Parameter parameter : parameterList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Parameter "+parameter);
 			if (ident.equalsIgnoreCase(parameter.identifier))
 				return (new Meaning(parameter, this, this, false));
-		for (LabelDeclaration label : labelList)
+		}
+		for (LabelDeclaration label : labelList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Label "+label);
 			if (ident.equalsIgnoreCase(label.identifier))
 				return (new Meaning(label, this, this, false));
+		}
+		if(Option.TRACE_FIND>0) Util.message("ENDOF Checking Procedure for "+ident+" ================================== "+identifier+" ==================================");
 		return (null);
 	}
 
@@ -271,7 +283,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 		Global.sourceLineNumber = lineNumber;
 		Util.BREAK("ProcedureDeclaration.doMethodJavaCoding: " + identifier);
 		ASSERT_SEMANTICS_CHECKED(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		String line = "public " + modifier + ((type == null) ? "void" : type.toJavaType());
 		line = line + ' ' + getJavaIdentifier() + ' ' + edFormalParameterList(true, addStaticLink);
 		JavaModule.code(line);
@@ -284,7 +297,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 		for (Statement stm : statements) stm.doJavaCoding();
 		if (type != null) JavaModule.code("return(RESULT$);");
 		JavaModule.code("}");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 	}
 
 	// ***********************************************************************************************
@@ -320,7 +334,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 		ASSERT_SEMANTICS_CHECKED(this);
 		if (this.isPreCompiled)	return;
 		JavaModule javaModule = new JavaModule(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		JavaModule.code("@SuppressWarnings(\"unchecked\")");
 		JavaModule.code("public final class " + getJavaIdentifier() + " extends PROC$ {");
 		JavaModule.debug("// ProcedureDeclaration: Kind=" + declarationKind + ", BlockLevel=" + blockLevel
@@ -351,7 +366,8 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 		codeProcedureBody();
 		javaModule.codeProgramInfo();
 		JavaModule.code("}", "End of Procedure");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		javaModule.closeJavaOutput();
 	}
 
@@ -484,9 +500,10 @@ public class ProcedureDeclaration extends BlockDeclaration implements Externaliz
 		
 		parameterList=(Vector<Parameter>) inpt.readObject();
 		labelList=(Vector<LabelDeclaration>) inpt.readObject();
-		declarationList=(Vector<Declaration>) inpt.readObject();
+		declarationList=(DeclarationList) inpt.readObject();
 		Util.TRACE_INPUT("END Read ProcedureDeclaration: "+identifier+", Declared in: "+this.declaredIn);
-		Global.currentScope = this.declaredIn;
+//		Global.currentScope = this.declaredIn;
+		Global.setScope(this.declaredIn);
 	}
 
 }

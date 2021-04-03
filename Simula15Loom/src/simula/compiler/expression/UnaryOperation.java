@@ -57,7 +57,7 @@ public final class UnaryOperation extends Expression {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber=lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN UnaryOperation" + toString() + ".doChecking - Current Scope Chain: " + Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN UnaryOperation" + toString() + ".doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		operand.doChecking();
 		if (oprator == KeyWord.NOT)
 			this.type=Type.Boolean;

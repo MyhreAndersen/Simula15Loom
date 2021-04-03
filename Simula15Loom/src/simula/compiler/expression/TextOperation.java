@@ -96,12 +96,13 @@ public final class TextOperation extends Expression {
 			return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN TextOperation" + toString() + ".doChecking - Current Scope Chain: " + Global.currentScope.edScopeChain());
+			Util.TRACE("BEGIN TextOperation" + toString() + ".doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
 		// TEXT & TEXT
 		lhs.doChecking();
 		rhs.doChecking();
-		if (lhs.type != Type.Text || rhs.type != Type.Text)
+		if (lhs.type != Type.Text || rhs.type != Type.Text) {
 			Util.error("Operand Type to Text Concatenation(&) is not Text");
+		}
 		this.type = Type.Text;
 		if (Option.TRACE_CHECKER)
 			Util.TRACE("END TextOperation" + toString() + ".doChecking - Result type=" + this.type);

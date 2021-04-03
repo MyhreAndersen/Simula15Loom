@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.Properties;
+import java.util.Stack;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -73,7 +74,7 @@ public final class Global {
 	public static String packetName = "simprog"; // NOTE: Must be a single identifier
 
 
-	public static DeclarationScope currentScope=null; // Current Scope. Maintained during Checking and Coding
+//	public static DeclarationScope currentScope=null; // Current Scope. Maintained during Checking and Coding
 	public static boolean duringParsing; // True while Parsing
 	  
 	public static JavaModule currentJavaModule; // Current Java output Module. Maintained by JavaModule during Java Coding
@@ -94,6 +95,22 @@ public final class Global {
 			}
 		}
 	}
+	
+	private static Stack<DeclarationScope> scopeStack=new Stack<DeclarationScope>();
+	private static DeclarationScope currentScope=null; // Current Scope. Maintained during Checking and Coding
+	public static DeclarationScope getCurrentScope() { return(currentScope); }
+	public static void setScope(DeclarationScope scope) { currentScope=scope; } // During Parsing
+	public static String edScopeChain() { return(getCurrentScope().edScopeChain()); }
+	
+	public static void enterScope(DeclarationScope scope) {
+//		Util.BREAK("Global.enterScope: currentScope <== "+scope);
+		scopeStack.push(currentScope); currentScope=scope;
+	}
+	public static void exitScope() {
+		currentScope=scopeStack.pop();
+//		Util.BREAK("Global.exitScope: currentScope <== "+currentScope);
+	}
+
 
 	public static File getTempFileDir(String subDir) {
 		String tmp=System.getProperty("java.io.tmpdir");

@@ -44,7 +44,8 @@ public final class SwitchDeclaration extends ProcedureDeclaration {
 		} while (Parser.accept(KeyWord.COMMA));
 		if (Option.TRACE_PARSE)	Parser.TRACE("Parse SwitchDeclaration(3), switchList=" + switchList);
 		new Parameter("$SW", Type.Integer, Parameter.Kind.Simple).into(parameterList);
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.setScope(declaredIn);
 	}
 
 	public void doChecking() {
@@ -59,7 +60,7 @@ public final class SwitchDeclaration extends ProcedureDeclaration {
 		if(virtSpec==null) {
 			// Switch attributes are implicit specified 'protected'
 			if(declaredIn.declarationKind==Declaration.Kind.Class)
-				((ClassDeclaration)declaredIn).protectedList.add(new ProtectedSpecification((ClassDeclaration)Global.currentScope,identifier));
+				((ClassDeclaration)declaredIn).protectedList.add(new ProtectedSpecification((ClassDeclaration)Global.getCurrentScope(),identifier));
 		}
 	}
 

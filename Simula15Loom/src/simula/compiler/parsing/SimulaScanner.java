@@ -438,7 +438,14 @@ public final class SimulaScanner extends DefaultScanner {
     	if(Option.TRACE_SCAN) Util.TRACE("scanNumber, result='"+result+"' radix="+radix);
 
     	pushBack(current);
-    	return(newToken(KeyWord.INTEGERKONST,Long.parseLong(result,radix)));
+//    	return(newToken(KeyWord.INTEGERKONST,Long.parseLong(result,radix)));
+    	long res = 0;
+    	try {
+    		res=Long.parseLong(result,radix);
+    	} catch (NumberFormatException e) {
+    		
+    	}
+    	return(newToken(KeyWord.INTEGERKONST,res));
     }
 
 

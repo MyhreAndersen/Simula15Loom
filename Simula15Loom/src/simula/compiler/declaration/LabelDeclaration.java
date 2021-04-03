@@ -24,7 +24,8 @@ public final class LabelDeclaration extends SimpleVariableDeclaration implements
 	public void doChecking() {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber=lineNumber;
-		DeclarationScope declaredIn=Global.currentScope;
+//		DeclarationScope declaredIn=Global.currentScope;
+		DeclarationScope declaredIn=Global.getCurrentScope();
 		type.doChecking(declaredIn);
 		VirtualSpecification virtSpec=VirtualSpecification.getVirtualSpecification(this);
 		if(virtSpec==null) {

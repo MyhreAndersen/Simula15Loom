@@ -119,7 +119,7 @@ public final class Constant extends Expression implements Externalizable {
     public void doChecking() {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber=lineNumber;
-		this.type.doChecking(Global.currentScope);
+		this.type.doChecking(Global.getCurrentScope());
 		SET_SEMANTICS_CHECKED();
 	}
 

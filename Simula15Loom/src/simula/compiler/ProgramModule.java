@@ -67,12 +67,13 @@ public final class ProgramModule extends Statement {
 		sysout=new Variable("sysout");
 		try	{
 			if(Option.TRACE_PARSE) Parser.TRACE("Parse Program");
-			Global.currentScope=StandardClass.BASICIO;			// BASICIO Begin
+//			Global.currentScope=StandardClass.BASICIO;			// BASICIO Begin
+			Global.setScope(StandardClass.BASICIO);		    	// BASICIO Begin
 			new ConnectionBlock(sysin,null)                     //    Inspect sysin do
 			     .setClassDeclaration(StandardClass.InFile);
 			new ConnectionBlock(sysout,null)                    //    Inspect sysout do
 			     .setClassDeclaration(StandardClass.PrintFile);
-			Global.currentScope.sourceBlockLevel=0;
+			Global.getCurrentScope().sourceBlockLevel=0;
 			while(Parser.accept(KeyWord.EXTERNAL)) {
 				ExternalDeclaration.doParse(StandardClass.ENVIRONMENT.declarationList);
 				Parser.expect(KeyWord.SEMICOLON);

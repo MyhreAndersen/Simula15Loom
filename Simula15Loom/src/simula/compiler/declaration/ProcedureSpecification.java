@@ -61,7 +61,8 @@ public final class ProcedureSpecification implements Externalizable {
 	public static ProcedureSpecification doParseProcedureSpecification(final Type type) {
 		ProcedureDeclaration block = ProcedureDeclaration.doParseProcedureDeclaration(type);
 		if (Option.TRACE_PARSE)	Util.TRACE("END ProcedureSpecification: " + block);
-		Global.currentScope = block.declaredIn;
+//		Global.currentScope = block.declaredIn;
+		Global.setScope(block.declaredIn);
 		ProcedureSpecification procedureSpecification = new ProcedureSpecification(block.identifier, type, block.parameterList);
 		return (procedureSpecification);
 	}

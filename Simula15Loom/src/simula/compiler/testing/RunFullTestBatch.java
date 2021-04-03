@@ -173,6 +173,7 @@ public final class RunFullTestBatch {
 		names.add("simtst124.sim"); // OK: GOTO VIRTUAL LABEL
 		names.add("simtst125.sim"); // OK: GOTO LABEL WITHIN NESTED COMPOUND STATEMENTS
 		names.add("simtst126.sim"); // OK: GOTO SIMPLE SWITCH
+		names.add("simtst127.sim"); // OK: Switch (character) Statement
 
 		names.add("simerr01.sim"); // OK: ILLEGAL GOTO out of an operating Process and into the enclosing System.
 		names.add("simerr02.sim"); // OK: Testing NONE-CHECK
@@ -188,7 +189,7 @@ public final class RunFullTestBatch {
 		Option.TRACING=false;
 		Option.WARNINGS=false;
 		
-		File userDir=new File("C:/GitHub/SimulaCompiler/Simula");
+		File userDir=new File("C:/GitHub/Simula15Loom/Simula15Loom");
 		Global.packetName="simulaTestBatch";
 		Global.simulaRtsLib=new File(userDir,"bin"); // To use Eclipse Project's simula.runtime
 		

@@ -30,7 +30,7 @@ public class SequencingSet$ {
 	}
 	
 	public void add(EVENT_NOTICE$ ev,boolean prior) {
-		ev.KEY=ev.EVTIME;
+		ev.KEY=ev.EVTIME();
 		boolean done=sequencingSet.add(ev);
 		while(!done) {
 			ev.KEY=(prior)?Math.nextDown(ev.KEY):Math.nextUp(ev.KEY);
@@ -67,7 +67,7 @@ public class SequencingSet$ {
 		//checkSQS();
 		StringBuilder s = new StringBuilder();
 		for(EVENT_NOTICE$ e:sequencingSet) {
-			s.append(' ').append(e.PROC.edObjectIdent()).append('[').append(e.EVTIME).append(']');			
+			s.append(' ').append(e.PROC.edObjectIdent()).append('[').append(e.EVTIME()).append(']');			
 		}
 		return (s.toString());
 	}

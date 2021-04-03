@@ -1337,28 +1337,69 @@ public class ENVIRONMENT$ extends RTObject$ {
 	// **********************************************************************
 	// *** Additional S-Port'like Procedures
 	// **********************************************************************
+	public String SourceFileName="C:\\GitHub\\Simula15Loom\\Simula15Loom\\src\\simulettaTestPrograms\\ENVIR.sml";
+	
 	public static PRCQNT$ EXCEPTION_HANDLER=null;
     public void DEFEXCEPTION(final PRCQNT$ EXCEPTION_HANDLER) {
     	//System.out.println("ENVIRONMENT.DEFEXCEPTION: EXCEPTION_HANDLER="+EXCEPTION_HANDLER);
     	ENVIRONMENT$.EXCEPTION_HANDLER=EXCEPTION_HANDLER;
     }
 
+    
+    
+//    Visible known("HASH") HASH;
+//    import infix(txtqnt) txt; export short integer val;
+//        -- ***** TEXT param, not STRING - SINT export, but must be in 0:255
+//    begin range(0:255) tmp,shift,ch;
+//          -----------------------------------------------------------------
+//          val:=0;
+//          if txt.ent <> none
+//          then shift:=1; tmp:=0;
+//               repeat while txt.sp<txt.lp do
+//                      -- ******* truncate below - DO NOT OVERFLOW ****** --
+//                      tmp:=tmp + ((txt.ent.cha(txt.sp) qua integer)*shift);
+//                      -- *******  i.e. "rem 256" *********************** --
+//                      txt.sp:=txt.sp+1;  shift:=5-shift;
+//               endrepeat;
+//               val:=tmp;
+//          endif;
+//          -----------------------------------------------------------------
+//    end;
     public int hash(final TXT$ t) {
-    	RT.NOT_IMPLEMENTED("hash"); // TODO: Implement it
-    	return(0);
+    	int hash=t.edText().hashCode();
+//    	RT.NOT_IMPLEMENTED("hash"); // TODO: Implement it
+    	RT.println("ENDOF hash: hash="+hash+", t="+t);
+    	return(hash);
     }
    
     public char loadChar(final TXT$ t,final int i) {
-    	RT.NOT_IMPLEMENTED("loadChar"); // TODO: Implement it
-    	return(' ');
+    	// Returns the character at position i+1 (NB).
+    	// I.e. characters are counted from zero
+    	// c=t.char[i];
+    	TEXTOBJ obj=t.OBJ;
+    	char c=obj.MAIN[t.START+i];
+    	return(c);
     }
     
     public void storeChar(final char c,final TXT$ t,final int i) {
-    	RT.NOT_IMPLEMENTED("storeChar"); // TODO: Implement it
+    	// Deposit c at position i+1 (NB).
+    	// I.e. characters are counted from zero
+    	// t.char[i]=c;
+    	TEXTOBJ obj=t.OBJ;
+    	obj.MAIN[t.START+i]=c;
     }
     
     public TXT$ getTextInfo(final int i) {
-    	RT.NOT_IMPLEMENTED("getTextInfo"); // TODO: Implement it
+    	switch(i) {
+    	case 1:  return(new TXT$(SourceFileName));  // SourceFileName
+    	case 2:  return(new TXT$("sysout"));  // listname  i.e.  Listing File Name
+    	case 4:  return(new TXT$("nscodename"));  // nscodename
+    	case 7:  return(new TXT$("ScratchFileName"));  // ScratchFileName
+    	case 11: return(new TXT$("AttributeInputFileName"));  // AttributeInputFileName
+    	case 12: return(new TXT$("AttributeOutputFileName")); // AttributeOutputFileName
+    	case 16: return(new TXT$("A")); // options and selectors
+    	default: RT.NOT_IMPLEMENTED("getTextInfo: "+i); // TODO: Implement it
+    	}
     	return(null);
     }
     
@@ -1367,7 +1408,14 @@ public class ENVIRONMENT$ extends RTObject$ {
     }
     
     public int getIntInfo(final int i) {
-    	RT.NOT_IMPLEMENTED("getIntInfo"); // TODO: Implement it
+    	switch(i) {
+    		case 1:  return(1);  // 1:GenerateScode
+    		case 4:  return(50);  // maxerrno
+    		case 5:  return(1);  // GiveNotes
+    		case 22:  return(0);  // recomp
+    		case 30:  return(0);  // simob_level
+    		default: RT.NOT_IMPLEMENTED("getIntInfo: "+i); // TODO: Implement it
+    	}
     	return(0);
     }
     

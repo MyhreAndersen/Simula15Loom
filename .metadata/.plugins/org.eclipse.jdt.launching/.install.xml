@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <dirs>
-<entry loc="C:\Program Files\Java\jdk-15" stamp="1585127045963"/>
-<entry loc="C:\Program Files\Java\jdk-12.0.1" stamp="1558428286841"/>
-<entry loc="C:\Program Files\Java\jdk-14" stamp="1584805153908"/>
-<entry loc="C:\Program Files\Java\jdk-15-Loom" stamp="1585127446049"/>
-<entry loc="C:\Program Files\Java\jdk1.8.0_73" stamp="1457117689202"/>
-<entry loc="C:\Program Files\Java\jdk-13.0.2" stamp="1584874656285"/>
-<entry loc="C:\Program Files\Java\jdk1.7.0_79" stamp="1449605249873"/>
-<entry loc="C:\Program Files\Java\jdk1.8.0_11" stamp="1585297218689"/>
+    <entry loc="C:\Program Files\Java\REM-jdk1.8.0_73" stamp="1457117689202"/>
+    <entry loc="C:\Program Files\Java\jdk-15" stamp="1585127045963"/>
+    <entry loc="C:\Program Files\Java\jdk-12.0.1" stamp="1558428286841"/>
+    <entry loc="C:\Program Files\Java\jdk-14" stamp="1584805153908"/>
+    <entry loc="C:\Program Files\Java\jdk-15-Loom" stamp="1585127446049"/>
+    <entry loc="C:\Program Files\Java\jdk1.8.0_73" stamp="1457117689202"/>
+    <entry loc="C:\Program Files\Java\jdk-13.0.2" stamp="1584874656285"/>
+    <entry loc="C:\Program Files\Java\jdk-16-Loom" stamp="1603790675795"/>
+    <entry loc="C:\Program Files\Java\jdk1.7.0_79" stamp="1449605249873"/>
+    <entry loc="C:\Program Files\Java\jdk1.8.0_11" stamp="1585297218689"/>
+    <entry loc="C:\Program Files\Java\REMOVED-jre1.8.0_241" stamp="1585237731957"/>
 </dirs>

@@ -3,30 +3,50 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="true"/>
-		<item key="wholeword" value="true"/>
+		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
-		<item key="selection" value="setup.jar"/>
+		<item key="selection" value="EVENT_NOTICE$"/>
 		<list key="findhistory">
-			<item value="setup2.jar"/>
-			<item value="github.io"/>
-			<item value="setup.jar"/>
-			<item value="setup"/>
-			<item value="setupProperties.xml"/>
-			<item value="doCheckForNewVersion"/>
-			<item value="icons"/>
-			<item value="setup2"/>
-			<item value="INSTALL_DIR"/>
+			<item value="OLDEVENT_NOTICE$"/>
+			<item value="scanNumber"/>
+			<item value="java"/>
+			<item value="SourceFileName"/>
+			<item value="OTHERWISE"/>
+			<item value="// OTHERWISE"/>
+			<item value="detach"/>
+			<item value="backLink"/>
+			<item value="back"/>
+			<item value="TRACE("/>
+			<item value="storechar"/>
+			<item value="instringval"/>
+			<item value="TRACE"/>
+			<item value=",&quot;S_"/>
+			<item value="lowcase"/>
 		</list>
 		<list key="replacehistory">
-			<item value="setup.jar"/>
+			<item value="EVENT_NOTICE$"/>
+			<item value=",&quot;"/>
+			<item value=","/>
+			<item value="DEFSYMB("/>
+			<item value="impos:=impos+1"/>
+			<item value="T_REAL"/>
+			<item value="hilo"/>
+			<item value="stag"/>
+			<item value="body"/>
+			<item value="if tag=0"/>
+			<item value="type"/>
+			<item value="qual"/>
+			<item value="tag"/>
+			<item value="hash"/>
+			<item value="symtab(i)"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="33"/>
-		<item key="DIALOG_Y_ORIGIN" value="333"/>
+		<item key="DIALOG_X_ORIGIN" value="1007"/>
+		<item key="DIALOG_Y_ORIGIN" value="228"/>
 		<item key="DIALOG_WIDTH" value="284"/>
-		<item key="DIALOG_HEIGHT" value="391"/>
+		<item key="DIALOG_HEIGHT" value="394"/>
 		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
 	</section>
 </section>

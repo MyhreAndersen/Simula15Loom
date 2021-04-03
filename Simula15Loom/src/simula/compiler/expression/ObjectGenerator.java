@@ -79,8 +79,8 @@ public final class ObjectGenerator extends Expression {
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber = lineNumber;
 		if (Option.TRACE_CHECKER)
-			Util.TRACE("BEGIN ObjectGenerator(" + classIdentifier + ").doChecking - Current Scope Chain: " + Global.currentScope.edScopeChain());
-		meaning = Global.currentScope.findMeaning(classIdentifier);
+			Util.TRACE("BEGIN ObjectGenerator(" + classIdentifier + ").doChecking - Current Scope Chain: " + Global.getCurrentScope().edScopeChain());
+		meaning = Global.getCurrentScope().findMeaning(classIdentifier);
 		if (meaning == null) {
 			Util.error("Undefined variable: " + classIdentifier);
 			meaning = new Meaning(null, null); // Error Recovery: No Meaning
@@ -150,12 +150,13 @@ public final class ObjectGenerator extends Expression {
 		// if(((ClassDeclaration)meaning.declaredAs).isDetachUsed())
 		if (cls.isDetachUsed()) {
 			s.append(".START$()");
-			String start="(("+classIdent+')'+s.toString()+')';
-			//Util.BREAK("ObjectGenerator.toJavaCode: START="+start);
+//			String start="(("+classIdent+')'+s.toString()+')';
+			String start=s.toString();
+			if(backLink!=null) start="(("+classIdent+')'+start+')';
+			//Util.BREAK("ObjectGenerator.toJavaCode: backLink="+this.backLink+", START="+start);
 			return(start);
 		} else
 			s.append(".STM$()");
-
 		return (s.toString());
 	}
 

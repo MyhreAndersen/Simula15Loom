@@ -43,7 +43,7 @@ public final class LabeledStatement extends Statement {
 		if (IS_SEMANTICS_CHECKED())	return;
 		statement.doChecking();
 		for (String label:labels) {
-			Meaning meaning = Global.currentScope.findMeaning(label);
+			Meaning meaning = Global.getCurrentScope().findMeaning(label);
 			try {
 			   LabelDeclaration decl=(LabelDeclaration)meaning.declaredAs;
 			   decl.doChecking();
@@ -56,7 +56,7 @@ public final class LabeledStatement extends Statement {
 		Global.sourceLineNumber=lineNumber;
 		ASSERT_SEMANTICS_CHECKED(this);
 		for (String label:labels) {
-			Meaning meaning = Global.currentScope.findMeaning(label);
+			Meaning meaning = Global.getCurrentScope().findMeaning(label);
 			LabelDeclaration decl=(LabelDeclaration)meaning.declaredAs;
 			JavaModule.code("LABEL$("+decl.index+",\""+decl.identifier+"\");");
 		}

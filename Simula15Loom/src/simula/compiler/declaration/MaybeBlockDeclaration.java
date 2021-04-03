@@ -85,7 +85,8 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 			}
 		}
 		this.lastLineNumber = Global.sourceLineNumber;
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.setScope(declaredIn);
 		return (new BlockStatement(this));
 	}
 
@@ -113,11 +114,13 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 		if (externalIdent == null) externalIdent = edJavaClassName();
 		if (declarationKind != Declaration.Kind.CompoundStatement) currentBlockLevel++;
 		blockLevel = currentBlockLevel;
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		for (Declaration dcl : declarationList)	dcl.doChecking();
 		for (Statement stm : statements) stm.doChecking();
 		doCheckLabelList(null);
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		if (declarationKind != Declaration.Kind.CompoundStatement) currentBlockLevel--;
 		SET_SEMANTICS_CHECKED();
 	}
@@ -126,12 +129,19 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 	// *** Utility: findVisibleAttributeMeaning
 	// ***********************************************************************************************
 	public Meaning findVisibleAttributeMeaning(final String ident) {
-		for (Declaration declaration : declarationList)
+		//Util.BREAK("MaybeBlockDeclaration.findVisibleAttributeMeaning: "+identifier+", Lookup ident="+ident);
+		if(Option.TRACE_FIND>0) Util.message("BEGIN Checking MayBeBlock for "+ident+" ================================== "+identifier+" ==================================");
+		for (Declaration declaration : declarationList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Local "+declaration);
 			if (ident.equalsIgnoreCase(declaration.identifier))
 				return (new Meaning(declaration, this, this, false));
-		for (LabelDeclaration label : labelList)
+		}
+		for (LabelDeclaration label : labelList) {
+			if(Option.TRACE_FIND>1) Util.message("Checking Label "+label);
 			if (ident.equalsIgnoreCase(label.identifier))
 				return (new Meaning(label, this, this, false));
+		}
+		if(Option.TRACE_FIND>0) Util.message("ENDOF Checking MayBeBlock for "+ident+" ================================== "+identifier+" ==================================");
 		return (null);
 	}
 
@@ -154,11 +164,15 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 		ASSERT_SEMANTICS_CHECKED(this);
 		Util.ASSERT(declarationList.isEmpty(), "Invariant");
 		Util.ASSERT(labelList.isEmpty(), "Invariant");
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		JavaModule.code("{");
-		for (Statement stm : statements) stm.doJavaCoding();
+		for (Statement stm : statements) {
+			stm.doJavaCoding();
+		}
 		JavaModule.code("}");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 	}
 
 	// ***********************************************************************************************
@@ -168,7 +182,8 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 		Global.sourceLineNumber = lineNumber;
 		ASSERT_SEMANTICS_CHECKED(this);
 		JavaModule javaModule = new JavaModule(this);
-		Global.currentScope = this;
+//		Global.currentScope = this;
+		Global.enterScope(this);
 		JavaModule.code("@SuppressWarnings(\"unchecked\")");
 		JavaModule.code("public final class " + getJavaIdentifier() + " extends BASICIO$" + " {");
 		JavaModule.debug("// SubBlock: Kind=" + declarationKind + ", BlockLevel=" + blockLevel + ", firstLine="
@@ -194,7 +209,8 @@ public final class MaybeBlockDeclaration extends BlockDeclaration {
 		}
 		javaModule.codeProgramInfo();
 		JavaModule.code("}", "End of SubBlock");
-		Global.currentScope = declaredIn;
+//		Global.currentScope = declaredIn;
+		Global.exitScope();
 		javaModule.closeJavaOutput();
 	}
 

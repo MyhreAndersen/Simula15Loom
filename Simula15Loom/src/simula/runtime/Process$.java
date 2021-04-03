@@ -100,12 +100,17 @@ public class Process$ extends Link$ {
 	public double evtime() {
 		if (idle())
 			throw new RuntimeException("Process.Evtime:  The process is idle.");
-		return (EVENT.EVTIME);			
+		return (EVENT.EVTIME());			
 	}
 
 	public Process$ nextev() {
 		if (idle())	return (null);
-		EVENT_NOTICE$ suc=((Simulation$) SL$).SQS.nextAfter(EVENT);
+		EVENT_NOTICE$ suc;
+		
+		if(Simulation$.USE_RANKING) 
+		     suc=((Simulation$) SL$).SQS.nextAfter(EVENT);
+		else suc=(EVENT_NOTICE$) Ranking.RANK_SUC(EVENT);
+		
 		if (suc == null)
 			return (null);
 		return (suc.PROC);

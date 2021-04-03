@@ -60,7 +60,7 @@ public class Type implements Externalizable {
 	public String getJavaRefIdent() {
 		if(key.getKeyWord()==KeyWord.REF) {
 			if(key.getValue()==null) return("RTObject$");
-			if(!CHECKED) this.doChecking(Global.currentScope);
+			if(!CHECKED) this.doChecking(Global.getCurrentScope());
 			if(qual==null) return("UNKNOWN");
 			return(qual.getJavaIdentifier());
 		}
@@ -69,16 +69,35 @@ public class Type implements Externalizable {
   
 	private boolean CHECKED=false; // Set true when doChecking is called
 	public void doChecking(final DeclarationScope scope) {
+		
+//		CHECKED=true; // TODO: ?????
+		
 		if (CHECKED) return;
+		Global.enterScope(scope);
 		String refIdent=getRefIdent();
 		if(refIdent!=null) {
 			if(!refIdent.equals("LABQNT$") && !refIdent.equals("$UNKNOWN")) {
+				
+//				if(refIdent.equalsIgnoreCase("SYMBOLBOX")) {
+//					Util.BREAK("Type.doChecking: refIdent="+refIdent+", scopeChain="+Global.getCurrentScope().edScopeChain());
+//					Global.getCurrentScope().print(0);  // TODO: SKAL FJERNES SEINERE
+//				}
+				
 				Declaration decl=scope.findMeaning(refIdent).declaredAs;
+				
+				
 			    if(decl instanceof ClassDeclaration) {
 			    	qual=(ClassDeclaration)decl;
-			    } else Util.error("Illegal Type: "+this.toString()+" - "+refIdent+" is not a Class");
+			    } else {
+			    	Util.error("Illegal Type: "+this.toString()+" - "+refIdent+" is not a Class");
+					Util.BREAK("Type.doChecking: refIdent="+refIdent+", scopeChain="+Global.getCurrentScope().edScopeChain());
+//					Global.getCurrentScope().print(0);  // TODO: SKAL FJERNES SEINERE
+					Option.TRACE_FIND=2; scope.findMeaning(refIdent);
+					
+			    }
 			}
 		}
+		Global.exitScope();
 		CHECKED=true;
 	}
 
@@ -129,8 +148,8 @@ public class Type implements Externalizable {
 		if(otherRef==null) result=false;  // No ref is a super-reference of NONE
 		else if(thisRef==null) result=true; // Any ref is a sub-reference of NONE
 		else {
-			BlockDeclaration thisDecl=(BlockDeclaration)Global.currentScope.findMeaning(thisRef).declaredAs;
-			BlockDeclaration otherDecl=(BlockDeclaration)Global.currentScope.findMeaning(otherRef).declaredAs;
+			BlockDeclaration thisDecl=(BlockDeclaration)Global.getCurrentScope().findMeaning(thisRef).declaredAs;
+			BlockDeclaration otherDecl=(BlockDeclaration)Global.getCurrentScope().findMeaning(otherRef).declaredAs;
 			if(thisDecl==null) result=false; // Error Recovery
 			else result=((ClassDeclaration)thisDecl).isSubClassOf((ClassDeclaration)otherDecl);
 		}
@@ -246,11 +265,13 @@ public class Type implements Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput oupt) throws IOException {
 		oupt.writeObject(key);
+		oupt.writeObject(qual);
 	}
 
 	@Override
 	public void readExternal(ObjectInput inpt) throws IOException, ClassNotFoundException {
 		key=(Token)inpt.readObject();
+		qual=(ClassDeclaration) inpt.readObject();
 	}
 	
 }

@@ -8,8 +8,10 @@
 package simula.compiler.declaration;
 
 import simula.compiler.utilities.Meaning;
+import simula.compiler.utilities.Option;
 import simula.compiler.utilities.OverLoad;
 import simula.compiler.utilities.Type;
+import simula.compiler.utilities.Util;
 
 import java.util.Vector;
 
@@ -66,6 +68,7 @@ public final class StandardClass extends ClassDeclaration
     RTObject.isContextFree=true;
     RTObject.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Text,"objectTraceIdentifier");
     RTObject.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Text,"waitSomeTime",parameter("millies",Type.Integer));
+    RTObject.addStandardProcedure(Declaration.Kind.MemberMethod,null,"detach"); // Nødvendig for å kompilere SDimuletta
   }
   
   // ******************************************************************
@@ -263,6 +266,7 @@ public final class StandardClass extends ClassDeclaration
   //  end BASICIO;
   
   public static StandardClass BASICIO=new StandardClass("RTObject","BASICIO");
+//  public static StandardClass BASICIO=new StandardClass("ENVIRONMENT","BASICIO");
   static
   { ENVIRONMENT.addStandardClass(BASICIO); // Declared in ENVIRONMENT
     BASICIO.isContextFree=true;
@@ -306,6 +310,7 @@ public final class StandardClass extends ClassDeclaration
   //     if FILENAME_ = notext then error("Illegal File Name");
   //  end FILE_;      
   public static StandardClass FILE=new StandardClass("RTObject","FILE",parameter("FILENAME$",Type.Text));
+//  public static StandardClass FILE=new StandardClass("BASICIO","FILE",parameter("FILENAME$",Type.Text));
   static
   { BASICIO.addStandardClass(FILE);  // Declared in BASICIO
     FILE.addStandardAttribute(Type.Boolean,"OPEN$");  
@@ -572,6 +577,7 @@ public final class StandardClass extends ClassDeclaration
     OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"open",parameter("fileimage",Type.Text));  
     OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"close");  
     OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"outbyte",parameter("x",Type.Integer));   
+    OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"out2byte",parameter("x",Type.Integer));   
     OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"outtext",parameter("t",Type.Text));  
     OutbyteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"checkpoint");  
   }  
@@ -613,7 +619,8 @@ public final class StandardClass extends ClassDeclaration
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"locate",parameter("i",Type.Integer));  
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Integer,"inbyte");  
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"outbyte",parameter("x",Type.Integer));   
-    DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"checkpoint");  
+    DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,null,"out2byte",parameter("x",Type.Integer));   
+//    DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"checkpoint");  
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Integer,"lock",parameter("t",Type.Real),parameter("i",Type.Integer),parameter("j",Type.Integer));  
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Boolean,"unlock");  
     DirectByteFile.addStandardProcedure(Declaration.Kind.MemberMethod,Type.Text,"intext",parameter("t",Type.Text));  
@@ -916,13 +923,17 @@ public final class StandardClass extends ClassDeclaration
     spec.setMode(mode); return(spec);
   }
   
-  public Meaning findVisibleAttributeMeaning(String ident)
-  { for(Declaration declaration:declarationList)
-    	if(ident.equalsIgnoreCase(declaration.identifier))
-    	   	  return(new Meaning(declaration,this));
-    ClassDeclaration prfx=getPrefixClass();
-    if(prfx!=null) return(prfx.findVisibleAttributeMeaning(ident));
-    return(null);
+  public Meaning findVisibleAttributeMeaning(String ident) {
+	  //Util.BREAK("StandardClass.findVisibleAttributeMeaning: "+identifier+", Lookup ident="+ident);
+	  if(Option.TRACE_FIND>0) Util.message("BEGIN Checking Standard Class for "+ident+" ================================== "+identifier+" ==================================");
+	  for(Declaration declaration:declarationList) {
+		  if(Option.TRACE_FIND>1) Util.message("Checking Local "+declaration);
+		  if(ident.equalsIgnoreCase(declaration.identifier)) return(new Meaning(declaration,this));
+    	}
+	  if(Option.TRACE_FIND>0) Util.message("ENDOF Checking Standard Class for "+ident+" ================================== "+identifier+" ==================================");
+	  ClassDeclaration prfx=getPrefixClass();
+	  if(prfx!=null) return(prfx.findVisibleAttributeMeaning(ident));
+	  return(null);
   }
   
   public Meaning findRemoteAttributeMeaning(String ident)
@@ -966,6 +977,14 @@ public final class StandardClass extends ClassDeclaration
 
   private void addStandardProcedure(Declaration.Kind kind,Type type,String ident)
   {	declarationList.add(new StandardProcedure(this,kind,type,ident)); }
+  
+	// ***********************************************************************************************
+	// *** Externalization
+	// ***********************************************************************************************
+	public StandardClass() {
+		super(null);
+	}
+
 
 }
 

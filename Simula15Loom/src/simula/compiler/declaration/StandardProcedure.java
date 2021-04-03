@@ -37,10 +37,12 @@ public final class StandardProcedure extends ProcedureDeclaration
   
   public void doChecking()
   { if(IS_SEMANTICS_CHECKED()) return;
+	Global.enterScope(this);
    	Global.sourceLineNumber=lineNumber;
   	String name=this.getClass().getSimpleName();
 	if(Option.TRACE_CHECKER) Util.TRACE("BEGIN "+name+".doChecking");
-	Global.currentScope=declaredIn;
+//	Global.currentScope=declaredIn;
+	Global.exitScope();
 	if(Option.TRACE_CHECKER) Util.TRACE("END StandardProcedure("+toString()+").doChecking - Result type="+this.type);
     SET_SEMANTICS_CHECKED();
   }
@@ -49,5 +51,12 @@ public final class StandardProcedure extends ProcedureDeclaration
   { String pfx=""; if(type!=null) pfx=type.toString()+" ";
     return(pfx+"PROCEDURE "+identifier);
   }
+
+  
+	// ***********************************************************************************************
+	// *** Externalization
+	// ***********************************************************************************************
+	public StandardProcedure() {
+	}
 
 }

@@ -70,9 +70,9 @@ public final class LocalObject extends Expression {
 	public void doChecking() { 
 		if (IS_SEMANTICS_CHECKED())	return;
 		Global.sourceLineNumber=lineNumber;
-		if (Option.TRACE_CHECKER);
-			Util.TRACE("BEGIN LocalObject(" + toString()+").doChecking - Current Scope Chain: "+Global.currentScope.edScopeChain());
-		Meaning meaning=Global.currentScope.findMeaning(classIdentifier);
+		if (Option.TRACE_CHECKER)
+			Util.TRACE("BEGIN LocalObject(" + toString()+").doChecking - Current Scope Chain: "+Global.getCurrentScope().edScopeChain());
+		Meaning meaning=Global.getCurrentScope().findMeaning(classIdentifier);
 		Declaration decl = meaning.declaredAs;
 		if (decl instanceof ClassDeclaration) classDeclaration=(ClassDeclaration)decl;
 		else Util.error("LocalObject("+this+") "+classIdentifier+" is not a class");
@@ -85,7 +85,7 @@ public final class LocalObject extends Expression {
     //***********************************************************************************************
 	private void findThis() {
 		ctxDiff=0;
-		thisScope=Global.currentScope;
+		thisScope=Global.getCurrentScope();
 		while(thisScope!=null) {
 			if (thisScope instanceof ClassDeclaration) {
 				if (classIdentifier.equalsIgnoreCase(thisScope.identifier)) return;// (thisScope);

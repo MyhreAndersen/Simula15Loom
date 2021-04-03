@@ -134,7 +134,8 @@ public final class Util {
 					printStackTrace();
 				}
 			} else try {
-				System.err.println(id + " " + Global.sourceLineNumber + ": " + title + ": <");
+//				System.err.println(id + " " + Global.sourceLineNumber + ": " + title + ": <");
+				System.out.println(id + " " + Global.sourceLineNumber + ": " + title + ": <");
 				char c=(char) System.in.read();
 				if (c == 'Q' || c == 'q') {
 					println("STACK-TRACE");

@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Stack;
 
+import simula.compiler.utilities.Global;
+
 //*************************************************************************************
 //**                                                             CLASS SourceFileReader
 //*************************************************************************************
@@ -24,6 +26,8 @@ import java.util.Stack;
 public final class SourceFileReader {
 	private final Stack<Reader> stack=new Stack<Reader>();
 	private Reader current; // current source file reader;
+	private int sourceLineNumber;
+	private final Stack<Integer> lineStack=new Stack<Integer>();
 	
 	public SourceFileReader(final Reader reader) {
 		current=reader;
@@ -35,6 +39,7 @@ public final class SourceFileReader {
 			  while (c == -1) {
 				  close();
 				  if (stack.isEmpty()) return (-1);
+				  Global.sourceLineNumber=lineStack.pop();
 				  current = stack.pop();
 				  c = current.read();
 			  }
@@ -43,6 +48,7 @@ public final class SourceFileReader {
 	}
 	
 	public void insert(final Reader reader) {
+		lineStack.push(Global.sourceLineNumber); Global.sourceLineNumber=1;
 		stack.push(current); current=reader;
 	}
 	    
